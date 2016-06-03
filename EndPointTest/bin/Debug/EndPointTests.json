@@ -1,0 +1,10 @@
+﻿[
+    {
+        "endpoint": "http://google.com",
+        "timeout": "0.00:00:02.0001"
+    },
+    {
+        "endpoint": "http://amazon.com",
+        "timeout": "0.00:00:02.0000"
+    }
+]
