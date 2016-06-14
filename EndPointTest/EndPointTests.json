@@ -1,11 +1,29 @@
 ﻿[
-    {
-        "endpoint": "http://google.com",
-        "timeout": "0.00:00:02.0001"
-    },
-    {
-        "endpoint": "http://amazon.com",
-        "timeout": "0.00:00:02.0000"
-    }
-    //1000977587
+  {
+    "endpoint": "https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOREST.ashx",
+    "timeout": "0.00:00:02.0001",
+    "requestMethod": "get",
+    "networkUserName": "jswen",
+    "networkPwd": "ews73Lsusso",
+    "queryParameters": [
+      {
+        "key": "strEnterpriseID",
+        "value": "1000977587"
+      },
+      {
+        "key": "strUserID",
+        "value": "aabram"
+      },
+      {
+        "key": "strApplicationKey",
+        "value": "905444a6-a8c3-4f91-b15e-efddd2aea8eb"
+      },
+      {
+        "key": "strPatientUrl",
+        "value": "https%3a%2f%2fnwhin.staging.gnohie.org%2fmirthresults%2fPatient.action%3fembed%3d%26subject.subjectKey%3d112868%26siteGlobalId%3dGNOHIE%20https://connect.gnohie.org:9085/results/api/v1/patients"
+      }
+    ],
+    "serviceName": "",
+    "serviceOnMachineName": ""
+  }
 ]
