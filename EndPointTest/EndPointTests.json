@@ -1,9 +1,14 @@
-﻿[
+﻿//https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOREST.ashx
+//strEnterpriseID=1000977587
+//strUserID=aabram
+//strApplicationKey=905444a6-a8c3-4f91-b15e-efddd2aea8eb
+//strPatientUrl=https%3a%2f%2fnwhin.staging.gnohie.org%2fmirthresults%2fPatient.action%3fembed%3d%26subject.subjectKey%3d112868%26siteGlobalId%3dGNOHIE%20https://connect.gnohie.org:9085/results/api/v1/patients
+[
   {
     "endpoint": "https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOREST.ashx",
-    "timeout": "0.00:00:02.0001",
+    "timeout": "0.00:00:09.0000",
     "requestMethod": "get",
-    "networkUserName": "jswen",
+    "networkUserName": "jswens",
     "networkPwd": "ews73Lsusso",
     "queryParameters": [
       {

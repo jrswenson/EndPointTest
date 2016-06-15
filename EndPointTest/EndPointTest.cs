@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.ServiceProcess;
@@ -140,6 +139,12 @@ namespace EndPointTest
             catch (Exception ex)
             {
                 log.Error(ex);
+                while(ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                    log.Error(ex);
+                }
+
                 return false;
             }
 
