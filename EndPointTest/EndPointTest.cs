@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -11,6 +12,8 @@ namespace EndPointTest
 {
     public class EndPointTest
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private static TimeSpan defaultTimeSpan = new TimeSpan();
         private static IList<string> RequestMethods = new List<string> { "GET", "POST" };
 
@@ -23,7 +26,7 @@ namespace EndPointTest
 
         ~EndPointTest()
         {
-            Debug.WriteLine("~EndPointTest");
+            log.Info("~EndPointTest");
             if (httpClient == null)
             {
                 httpClient.Dispose();
@@ -128,6 +131,7 @@ namespace EndPointTest
                     case "GET":
                     default:
                         var request = $"{this.EndPoint}{GetQueryString()}";
+                        log.Debug(request);
                         var response = httpClient.GetAsync(request).Result;
                         response.EnsureSuccessStatusCode();
                         break;
@@ -135,6 +139,7 @@ namespace EndPointTest
             }
             catch (Exception ex)
             {
+                log.Error(ex);
                 return false;
             }
 
