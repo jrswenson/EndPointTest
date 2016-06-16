@@ -5,6 +5,7 @@
 //strPatientUrl=https%3a%2f%2fnwhin.staging.gnohie.org%2fmirthresults%2fPatient.action%3fembed%3d%26subject.subjectKey%3d112868%26siteGlobalId%3dGNOHIE%20https://connect.gnohie.org:9085/results/api/v1/patients
 [
   {
+    "enabled" :  false,
     "endpoint": "https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOREST.ashx",
     "timeout": "0.00:00:09.0000",
     "requestMethod": "get",
@@ -26,6 +27,49 @@
       {
         "key": "strPatientUrl",
         "value": "https%3a%2f%2fnwhin.staging.gnohie.org%2fmirthresults%2fPatient.action%3fembed%3d%26subject.subjectKey%3d112868%26siteGlobalId%3dGNOHIE%20https://connect.gnohie.org:9085/results/api/v1/patients"
+      }
+    ],
+    "serviceName": "",
+    "serviceOnMachineName": ""
+  },
+  {
+    "endpoint": "https://sso.staging.gnohie.org/MirthSignOn-idp/ssoresp",
+    "timeout": "0.00:00:09.0000",
+    "requestMethod": "saml",
+    "networkUserName": "jswens",
+    "networkPwd": "ews73Lsusso",
+    "queryParameters": [
+      {
+        "key": "issuer",
+        "value": "https://sso.staging.gnohie.org/MirthSignOn-idp/ssoresp"
+      },
+      {
+        "key": "member",
+        "value": "MirthResultsUser"
+      },
+      {
+        "key": "userEmail",
+        "value": "aabram@lsuhsc.edu"
+      },
+      {
+        "key": "cn",
+        "value": "Amir Abrams"
+      },
+      {
+        "key": "uid",
+        "value": "aabram"
+      },
+      {
+        "key": "patientUrl",
+        "value": "https://nwhin.staging.gnohie.org/mirthresults/Patient.action?embed=&subject.subjectKey=112868&siteGlobalId=GNOHIE https://connect.gnohie.org:9085/results/api/v1/patients"
+      },
+      {
+        "key": "pfxLocation",
+        "value": "C:\\Users\\Jeff Swenson\\DevTools\\sso_dev.pfx"
+      },
+      {
+        "key": "pfxPwd",
+        "value": "d3vk3y"
       }
     ],
     "serviceName": "",

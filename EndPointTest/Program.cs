@@ -29,7 +29,7 @@ namespace EndPointTest
             if (items != null)
             {
                 var failures = new List<string>();
-                foreach (var item in items)
+                foreach (var item in items.Where(i => i.Enabled))
                 {
                     if (item.Test() == false)
                     {
@@ -69,10 +69,17 @@ namespace EndPointTest
                             new MailAddress(appSettings["toAddress"], appSettings["toName"]));
                         mailMsg.Subject = $"End Point Failures {DateTime.Now.ToString(appSettings["dateFormat"])}";
                         mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(buffer.ToString(), null, MediaTypeNames.Text.Html));
-
-                        using (var smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587)))
+                                             
+                        using (var smtpClient = new SmtpClient(appSettings["relayAddress"], Convert.ToInt32(appSettings["relayPort"])))                            
                         {
-                            smtpClient.Credentials = new System.Net.NetworkCredential(appSettings["sendGridUser"], appSettings["sendGridPwd"]); ;
+                            var usr = appSettings["relayUser"];
+                            var pwd = appSettings["relayPwd"];
+                            
+                            if(string.IsNullOrWhiteSpace(usr) == false && string.IsNullOrWhiteSpace(pwd) == false)
+                            {
+                                smtpClient.Credentials = new System.Net.NetworkCredential(usr, pwd);
+                            }
+                            
                             smtpClient.Send(mailMsg);
                         }
                     }
