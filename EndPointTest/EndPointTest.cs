@@ -24,12 +24,14 @@ namespace EndPointTest
 
         private bool enabled = true;
         private static TimeSpan defaultTimeSpan = new TimeSpan();
-        private static IList<string> RequestMethods = new List<string> { "GET", "POST", "SAML" };
+        private static IList<string> RequestMethods = new List<string> { "GET", "POST", "SAML", "CONTEXT" };
 
         private TimeSpan timeOutSpan;
         private string timeOut = "";
         private string requestMethod = "GET";
         private IList<KeyValuePair<string, string>> queryParameters = new List<KeyValuePair<string, string>>();
+
+        private bool? success = null;
 
         private HttpClient httpClient = null;
 
@@ -45,6 +47,7 @@ namespace EndPointTest
 
         public bool Enabled { get { return enabled; } set { enabled = value; } }
         public string EndPoint { get; set; }
+        public string OnFailUrl { get; set; }
 
         public string TimeOut
         {
@@ -104,6 +107,8 @@ namespace EndPointTest
 
         public string ServiceOnMachineName { get; set; }
 
+        public bool? Success { get { return success; } set { success = value; } }
+
         private string GetQueryString()
         {
             var result = new StringBuilder();
@@ -128,21 +133,67 @@ namespace EndPointTest
                 return new HttpClient(new HttpClientHandler { Credentials = new NetworkCredential(NetworkUserName, NetworkPwd) }) { Timeout = timeOutSpan.CompareTo(defaultTimeSpan) > 0 ? timeOutSpan : new TimeSpan(0, 0, 0, 3, 0) };
             }
         }
+
+        private bool GetResponse(HttpClient client, string request, out HttpResponseMessage response)
+        {
+            try
+            {
+                log.Debug(request);
+                response = httpClient.GetAsync(request).Result;
+                response.EnsureSuccessStatusCode();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                response = null;
+
+                log.Error(ex);
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                    log.Error(ex);
+                }
+
+                return false;
+            }
+        }
+
+        private bool PostResponse(HttpClient client, string request, FormUrlEncodedContent content, out HttpResponseMessage response)
+        {
+            try
+            {
+                response = httpClient.PostAsync(request, content).Result;
+                response.EnsureSuccessStatusCode();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                response = null;
+
+                log.Error(ex);
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                    log.Error(ex);
+                }
+
+                return false;
+            }
+        }
+
         public bool Test()
         {
             httpClient = httpClient ?? GetHttpClient();
-
-            try
+            HttpResponseMessage response;
+            switch (RequestMethod)
             {
-                HttpResponseMessage response;
-                switch (RequestMethod)
-                {
-                    case "SAML":
-                        var saml = BuildSAML();
-                        var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("SAMLResponse", saml) });
-                        response = httpClient.PostAsync(EndPoint, content).Result;
-                        response.EnsureSuccessStatusCode();
-
+                case "SAML":
+                    var saml = BuildSAML();
+                    var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("SAMLResponse", saml) });
+                    success = PostResponse(httpClient, EndPoint, content, out response);
+                    if (success != null && success == true)
+                    {
                         var resultContent = response.Content.ReadAsStringAsync().Result;
                         var ssoUrl = ParseSAMLResponse(resultContent);
 
@@ -153,75 +204,30 @@ namespace EndPointTest
                             wb.ScriptErrorsSuppressed = true;
                             wb.Navigate(ssoUrl);
                             while (wb.ReadyState != WebBrowserReadyState.Complete) { Application.DoEvents(); }
-                            var x = wb.Document.DomDocument.ToString();
+                            var bodyHtml = wb.Document.Body.OuterHtml.ToString();
                         });
 
                         t.SetApartmentState(ApartmentState.STA);
                         t.Start();
                         t.Join(10000);
+                    }
 
-                        break;
-                    case "GET":
-                    default:
-                        var request = $"{EndPoint}{GetQueryString()}";
-                        log.Debug(request);
-                        response = httpClient.GetAsync(request).Result;
-                        response.EnsureSuccessStatusCode();
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                while (ex.InnerException != null)
-                {
-                    ex = ex.InnerException;
-                    log.Error(ex);
-                }
+                    break;
+                case "CONTEXT":
+                    success = GetResponse(httpClient, $"{EndPoint}{GetQueryString()}", out response);
+                    if (success != null && success == true)
+                    {
+                        var blah = response.Content.ReadAsStringAsync();
+                    }
 
-                return false;
+                    break;
+                case "GET":
+                default:
+                    success = GetResponse(httpClient, $"{EndPoint}{GetQueryString()}", out response);
+                    break;
             }
 
-            return true;
-        }
-
-        public bool? StopService()
-        {
-            if (string.IsNullOrWhiteSpace(ServiceName))
-                return null;
-
-            ServiceController service = null;
-            try
-            {
-                service = new ServiceController(ServiceName, string.IsNullOrWhiteSpace(ServiceOnMachineName) ? "." : ServiceOnMachineName);
-                if (service.Status == ServiceControllerStatus.Stopped)
-                    return true;
-
-                service.Stop();
-                service.WaitForStatus(ServiceControllerStatus.Stopped);
-            }
-            catch (InvalidEnumArgumentException ex)
-            {
-                return null;
-                throw;
-            }
-            catch (ArgumentException ex)
-            {
-                return null;
-                throw;
-            }
-            catch (System.ServiceProcess.TimeoutException ex)
-            {
-                return service == null ? null : (bool?)(service.Status == ServiceControllerStatus.Stopped);
-                throw;
-            }
-            catch (Exception ex)
-            {
-                return null;
-                throw;
-            }
-
-            return service.Status == ServiceControllerStatus.Stopped;
+            return success == true ? true : false;
         }
 
         private string BuildSAML()
@@ -320,6 +326,22 @@ namespace EndPointTest
             }
 
             return sb.ToString();
+        }
+
+        public void OnFail()
+        {
+            httpClient = httpClient ?? GetHttpClient();
+
+            var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("setStatus", "false") });
+            HttpResponseMessage response = httpClient.PostAsync(OnFailUrl, content).Result;
+        }
+
+        public void OnSuccess()
+        {
+            httpClient = httpClient ?? GetHttpClient();
+
+            var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("setStatus", "true") });
+            HttpResponseMessage response = httpClient.PostAsync(OnFailUrl, content).Result;
         }
     }
 }

@@ -36,19 +36,7 @@ namespace EndPointTest
                         var msg = new StringBuilder();
                         msg.Append(item.EndPoint);
 
-                        var stopResult = item.StopService();
-                        if (stopResult != null)
-                        {
-                            var serverName = string.IsNullOrWhiteSpace(item.ServiceOnMachineName) ? String.Empty : $"on {item.ServiceOnMachineName} ";
-                            if (stopResult == true)
-                            {
-                                msg.Append($" ({item.ServiceName} {serverName} is stopped.)");
-                            }
-                            else
-                            {
-                                msg.Append($" ({item.ServiceName} {serverName} is not stopped.)");
-                            }
-                        }
+                        item.OnFail();
 
                         log.Info(msg.ToString());
                         failures.Add(msg.ToString());
@@ -69,23 +57,33 @@ namespace EndPointTest
                             new MailAddress(appSettings["toAddress"], appSettings["toName"]));
                         mailMsg.Subject = $"End Point Failures {DateTime.Now.ToString(appSettings["dateFormat"])}";
                         mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(buffer.ToString(), null, MediaTypeNames.Text.Html));
-                                             
-                        using (var smtpClient = new SmtpClient(appSettings["relayAddress"], Convert.ToInt32(appSettings["relayPort"])))                            
+
+                        using (var smtpClient = new SmtpClient(appSettings["relayAddress"], Convert.ToInt32(appSettings["relayPort"])))
                         {
                             var usr = appSettings["relayUser"];
                             var pwd = appSettings["relayPwd"];
-                            
-                            if(string.IsNullOrWhiteSpace(usr) == false && string.IsNullOrWhiteSpace(pwd) == false)
+
+                            if (string.IsNullOrWhiteSpace(usr) == false && string.IsNullOrWhiteSpace(pwd) == false)
                             {
                                 smtpClient.Credentials = new System.Net.NetworkCredential(usr, pwd);
                             }
-                            
+
                             smtpClient.Send(mailMsg);
                         }
                     }
                     catch (Exception ex)
                     {
                         log.Error(ex);
+                    }
+                }
+                else
+                {
+                    if (items.All(i => i.Success == true))
+                    {
+                        foreach (var item in items.Where(i => i.Enabled))
+                        {
+                            item.OnSuccess();
+                        }
                     }
                 }
             }

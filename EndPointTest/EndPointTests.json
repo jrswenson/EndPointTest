@@ -5,8 +5,9 @@
 //strPatientUrl=https%3a%2f%2fnwhin.staging.gnohie.org%2fmirthresults%2fPatient.action%3fembed%3d%26subject.subjectKey%3d112868%26siteGlobalId%3dGNOHIE%20https://connect.gnohie.org:9085/results/api/v1/patients
 [
   {
-    "enabled" :  false,
+    "enabled": false,
     "endpoint": "https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOREST.ashx",
+    "onFailUrl": "https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOStatusREST.ashx",
     "timeout": "0.00:00:09.0000",
     "requestMethod": "get",
     "networkUserName": "jswens",
@@ -33,8 +34,35 @@
     "serviceOnMachineName": ""
   },
   {
-    "endpoint": "https://sso.staging.gnohie.org/MirthSignOn-idp/ssoresp",
+    "enabled": true,
+    "endpoint": "https://nwhin.staging.gnohie.org/results/api/v1/patients",
+    "onFailUrl": "https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOStatusREST.ashx",
     "timeout": "0.00:00:09.0000",
+    "requestMethod": "CONTEXT",
+    "networkUserName": "ilh_filter",
+    "networkPwd": "K6KmZqQBgbGrFdp",
+    "queryParameters": [
+      {
+        "key": "aliasId",
+        "value": "1000977587"
+      },
+      {
+        "key": "aliasFacilityGlobalId",
+        "value": "ILH"
+      },
+      {
+        "key": "aliasType",
+        "value": "HL7.PID"
+      }
+    ],
+    "serviceName": "",
+    "serviceOnMachineName": ""
+  },
+  {
+    "enabled": false,
+    "endpoint": "https://sso.staging.gnohie.org/MirthSignOn-idp/ssoresp",
+    "onFailUrl": "https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOStatusREST.ashx",
+    "timeout": "0.00:00:0.0000",
     "requestMethod": "saml",
     "networkUserName": "jswens",
     "networkPwd": "ews73Lsusso",
@@ -45,7 +73,7 @@
       },
       {
         "key": "member",
-        "value": "MirthResultsUser"
+        "value": "MirthResultsUser2"
       },
       {
         "key": "userEmail",
@@ -57,7 +85,7 @@
       },
       {
         "key": "uid",
-        "value": "aabram"
+        "value": "abram"
       },
       {
         "key": "patientUrl",
