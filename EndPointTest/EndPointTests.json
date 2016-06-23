@@ -36,6 +36,7 @@
   {
     "enabled": true,
     "endpoint": "https://nwhin.staging.gnohie.org/results/api/v1/patients",
+    https: //connect.staging.gnohie.org:9085/results/api/v1/patients?aliasId=bogusid&aliasFacilityGlobalId=ILH&aliasType=HL7.PID
     "onFailUrl": "https://miweb2012.lsuhsc.edu/cliqboltonwebservices/MirthResultsSSOStatusREST.ashx",
     "timeout": "0.00:00:09.0000",
     "requestMethod": "CONTEXT",
@@ -44,11 +45,11 @@
     "queryParameters": [
       {
         "key": "aliasId",
-        "value": "1000066239"
+        "value": "10707298"
       },
       {
         "key": "aliasFacilityGlobalId",
-        "value": "ILH"
+        "value": "UMC"
       },
       {
         "key": "aliasType",
