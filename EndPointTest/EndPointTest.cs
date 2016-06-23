@@ -218,6 +218,7 @@ namespace EndPointTest
                     if (success != null && success == true)
                     {
                         var blah = response.Content.ReadAsStringAsync();
+                        log.Debug(blah.Result);
                     }
 
                     break;

@@ -15,7 +15,7 @@
     "queryParameters": [
       {
         "key": "strEnterpriseID",
-        "value": "1000977587"
+        "value": "000977587"
       },
       {
         "key": "strUserID",
@@ -44,7 +44,7 @@
     "queryParameters": [
       {
         "key": "aliasId",
-        "value": "1000977587"
+        "value": "1000066239"
       },
       {
         "key": "aliasFacilityGlobalId",
